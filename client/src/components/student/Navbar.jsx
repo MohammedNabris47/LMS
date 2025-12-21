@@ -3,14 +3,38 @@ import assets from "../../assets/assets";
 import { Link } from "react-router-dom";
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { GlobalContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const isCourseListPage = location.pathname.includes("/course-list");
-
+  const { navigate, isEducator, backendUrl, setIsEducator, getToken } =
+    useContext(GlobalContext);
   const { openSignIn } = useClerk();
   const { user } = useUser();
-  const { navigate, isEducator } = useContext(GlobalContext);
 
+  const becomeEducator = async () => {
+    try {
+      if (isEducator) {
+        navigate("/educator");
+        return;
+      }
+      const token = await getToken();
+      const { data } = await axios.get(
+        backendUrl + "/api/educator/update-role",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setIsEducator(true);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div
       className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b border-gray-200 py-4  ${
@@ -27,10 +51,7 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {user && (
             <>
-              <button
-                className="text-[14px]"
-                onClick={() => navigate("/educator")}
-              >
+              <button className="text-[14px]" onClick={becomeEducator}>
                 {isEducator ? "Educator Dashboard" : "Become Educator"}
               </button>
               |
@@ -55,10 +76,7 @@ const Navbar = () => {
         <div className="flex items-center gap-1 sm:gap-1.5 max-sm:text-xs">
           {user && (
             <>
-              <button
-                className="text-[14px]"
-                onClick={() => navigate("/educator")}
-              >
+              <button className="text-[14px]" onClick={becomeEducator}>
                 {isEducator ? "Educator Dashboard" : "Become Educator"}
               </button>
               |

@@ -18,7 +18,7 @@ const CourseCard = ({ course }) => {
       />
       <div className="text-left p-3">
         <h3 className="text-sm font-semibold">{course.courseTitle}</h3>
-        <p className="text-gray-700 text-[13px]">Roman</p>
+        <p className="text-gray-700 text-[13px]">{course.educator.name}</p>
         <div className="flex items-center space-x-2">
           <p>{calculateRating(course)}</p>
           <div className="flex">
