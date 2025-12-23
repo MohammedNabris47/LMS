@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 const CourseDetails = () => {
   const { id } = useParams();
   const {
-    allCourses,
     calculateRating,
     calculateChapterTime,
     calculateCourseDuration,
